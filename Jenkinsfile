@@ -13,7 +13,6 @@ pipeline {
                 nodejs(nodeJSInstallationName: 'Node') {
                     sh 'npm install'
                 }
-                sh 'npm install'
                 sh 'zip -r dist.zip .'
                 stash includes: '**/*.zip', name: 'app'
             }
