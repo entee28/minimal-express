@@ -12,7 +12,7 @@ pipeline {
             steps {
                 sh 'npm install'
                 sh 'zip -r dist.zip .'
-                stash includes '**/*.zip', name: 'app'
+                stash includes: '**/*.zip', name: 'app'
             }
         }
 
