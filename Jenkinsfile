@@ -18,15 +18,33 @@ pipeline {
             }
         }
 
+        
+
         stage("Deploy") {
-            steps {
-                unstash 'app'
-                sh '''
-                    az login --service-principal -u $AZ_SERVICE_PRINCIPLE_USR -p $AZ_SERVICE_PRINCIPLE_PSW -t $AZ_TENANT_ID
-                    az account set -s $AZ_SUBSCRIPTION_ID
-                '''
-                sh 'az webapp deployment source config-zip --resource-group jenkins-lab --name minimal-express --src dist.zip'
+            parallel {
+                stage('Actual Deploy') {
+                    agent any
+
+                    steps {
+                        unstash 'app'
+                        sh '''
+                            az login --service-principal -u $AZ_SERVICE_PRINCIPLE_USR -p $AZ_SERVICE_PRINCIPLE_PSW -t $AZ_TENANT_ID
+                            az account set -s $AZ_SUBSCRIPTION_ID
+                        '''
+                        sh 'az webapp deployment source config-zip --resource-group jenkins-lab --name minimal-express --src dist.zip'
+                    }
+
+                }
+                stage('Print') {
+                    agent any
+
+                    steps {
+                        sh "echo 'Hello World'"
+                    }
+                }
             }
+
+            
         }
     }
 }
