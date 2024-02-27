@@ -12,22 +12,20 @@ pipeline {
                     - name: kaniko
                       workingDir: /home/jenkins
                       image: gcr.io/kaniko-project/executor:debug
+                      envFrom:
+                        - secretRef:
+                            name: kaniko-secret
                       command:
                       - /busybox/cat
                       tty: true
                       volumeMounts:
                       - name: docker-config
                         mountPath: /kaniko/.docker/
-                      - name: kaniko-secret
-                        mountPath: /kaniko/.docker/acr/
                     restartPolicy: Never
                     volumes:
                     - name: docker-config
                       configMap:
                         name: docker-config
-                    - name: kaniko-secret
-                      secret:
-                        secretName: kaniko-secret
             '''
         }
     }
