@@ -37,10 +37,9 @@ pipeline {
             }
 
             steps {
-                sh 'echo $AZURE_CLIENT_ID'
-
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
+                        echo $AZURE_CLIENT_ID
                         /kaniko/executor --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
                     '''
                 }
