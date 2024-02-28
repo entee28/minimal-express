@@ -39,7 +39,7 @@ pipeline {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        /kaniko/executor --context 'pwd' --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
+                        /kaniko/executor --context '.' --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
                     '''
                 }
             }
