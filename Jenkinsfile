@@ -44,7 +44,7 @@ pipeline {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        ls /kaniko -a
+                        docker run -v $(pwd):/workspace gcr.io/kaniko-project/warmer:latest --cache-dir=/kaniko/cache --dockerfile='/kaniko/Dockerfile'
                         /kaniko/executor --context '.' --cache=true --cache-dir='/kaniko/cache' --cache-copy-layers --cache-run-layers --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
                     '''
                 }
