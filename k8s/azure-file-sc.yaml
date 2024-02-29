@@ -14,4 +14,3 @@ mountOptions:
  - actimeo=30
 parameters:
   skuName: Premium_LRS
-  protocol: nfs
