@@ -42,9 +42,11 @@ pipeline {
             }
 
             steps {
+                sh 'ls . -a'
+                sh 'ls /kaniko -a'
+
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        ls .
                         /kaniko/executor --context '.' --cache=true --cache-dir='/cache' --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
                     '''
                 }
