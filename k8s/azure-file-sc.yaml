@@ -14,4 +14,3 @@ mountOptions:
  - actimeo=30
 parameters:
   skuName: Standard_LRS
-  resourceGroup: k8s-jenkins-lab

@@ -21,11 +21,16 @@ pipeline {
                       volumeMounts:
                       - name: docker-config
                         mountPath: /kaniko/.docker/
+                      - name: docker-cache
+                        mountPath: /kaniko/cache/
                     restartPolicy: Never
                     volumes:
                     - name: docker-config
                       configMap:
                         name: docker-config
+                    - name: docker-cache
+                      persistentVolumeClaim:
+                        claimName: my-azurefile 
             '''
         }
     }
