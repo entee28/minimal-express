@@ -13,5 +13,5 @@ mountOptions:
  - cache=strict
  - actimeo=30
 parameters:
-  skuName: Standard_LRS
+  skuName: Premium_LRS
   protocol: nfs
