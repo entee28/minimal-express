@@ -28,28 +28,28 @@ pipeline {
                         spec:
                             containers:
                             - name: jnlp
-                            workingDir: /home/jenkins
+                              workingDir: /home/jenkins
                             - name: kaniko
-                            workingDir: /home/jenkins
-                            image: gcr.io/kaniko-project/executor:debug
-                            envFrom:
+                              workingDir: /home/jenkins
+                              image: gcr.io/kaniko-project/executor:debug
+                              envFrom:
                                 - secretRef:
                                     name: kaniko-secret
-                            command:
-                            - /busybox/cat
-                            tty: true
-                            volumeMounts:
-                            - name: docker-config
+                              command:
+                              - /busybox/cat
+                              tty: true
+                              volumeMounts:
+                              - name: docker-config
                                 mountPath: /kaniko/.docker/
-                            - name: lib-cache
+                              - name: lib-cache
                                 mountPath: /home/node/app/node_modules
                             restartPolicy: Never
                             volumes:
                             - name: docker-config
-                            configMap:
+                              configMap:
                                 name: docker-config
                             - name: lib-cache
-                            persistentVolumeClaim:
+                              persistentVolumeClaim:
                                 claimName: my-azurefile
                     '''
                 }
