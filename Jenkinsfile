@@ -59,27 +59,20 @@ pipeline {
             }
 
             steps {
-                cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-                    arbitaryFileCache(
-                        path: 'node_modules',
-                        cacheValidityDecidingFile: 'package-lock.json'
-                    )
-                ]) {
-                    container(name: 'kaniko', shell: '/busybox/sh') {
-                        sh '''#!/busybox/sh
-                        /kaniko/executor \
-                        --cache=true \
-                        --use-new-run \
-                        --snapshot-mode=redo \
-                        --context $CI_PROJECT_DIR \
-                        --dockerfile $CI_PROJECT_DIR/Dockerfile \
-                        --verbosity debug \
-                        --build-arg CI_PROJECT_DIR=$CI_PROJECT_DIR \
-                        --destination thachthucregistry.azurecr.io/minimal-express:latest \
-                    '''
-                        }
+                container(name: 'kaniko', shell: '/busybox/sh') {
+                    sh '''#!/busybox/sh
+                    /kaniko/executor \
+                    --cache=true \
+                    --use-new-run \
+                    --snapshot-mode=redo \
+                    --context $CI_PROJECT_DIR \
+                    --dockerfile $CI_PROJECT_DIR/Dockerfile \
+                    --verbosity debug \
+                    --build-arg CI_PROJECT_DIR=$CI_PROJECT_DIR \
+                    --destination thachthucregistry.azurecr.io/minimal-express:latest \
+                '''
                     }
-                }
             }
         }
     }
+}
