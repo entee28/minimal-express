@@ -11,7 +11,9 @@ pipeline {
                         cacheValidityDecidingFile: 'package-lock.json'
                     )
                 ]) {
-                    sh 'npm ci'
+                    nodejs(nodeJSInstallationName: 'node') {
+                        sh 'npm ci'
+                    }
                 }
             }
         }
