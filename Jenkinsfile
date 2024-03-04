@@ -21,16 +21,16 @@ pipeline {
                       volumeMounts:
                       - name: docker-config
                         mountPath: /kaniko/.docker/
-                      - name: docker-cache
-                        mountPath: /kaniko/cache/
+                      - name: lib-cache
+                        mountPath: /kaniko/node_modules/
                     restartPolicy: Never
                     volumes:
                     - name: docker-config
                       configMap:
                         name: docker-config
-                    - name: docker-cache
+                    - name: lib-cache
                       persistentVolumeClaim:
-                        claimName: my-azurefile 
+                        claimName: my-azurefile
             '''
         }
     }
@@ -44,8 +44,7 @@ pipeline {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        ls /kaniko/cache
-                        /kaniko/executor --context '.' --cache=true --cache-dir='/kaniko/cache' --cache-copy-layers --cache-run-layers --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
+                        /kaniko/executor --context '.' --dockerfile Dockerfile --verbosity debug --destination thachthucregistry.azurecr.io/minimal-express:latest
                     '''
                 }
             }
