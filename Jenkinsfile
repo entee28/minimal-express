@@ -1,21 +1,17 @@
 pipeline {
-    agent none
+    agent any
 
     stages {
         stage('Cache stage') {
             steps {
-                podTemplate {
-                    node(POD_LABEL) {
-                        cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-                            arbitraryFileCache(
-                                path: 'node_modules',
-                                cacheValidityDecidingFile: 'package-lock.json'
-                            )
-                        ]) {
-                            nodejs(nodeJSInstallationName: 'node') {
-                                sh 'npm ci'
-                            }
-                        }
+                cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
+                    arbitraryFileCache(
+                        path: 'node_modules',
+                        cacheValidityDecidingFile: 'package-lock.json'
+                    )
+                ]) {
+                    nodejs(nodeJSInstallationName: 'node') {
+                        sh 'npm ci'
                     }
                 }
             }
