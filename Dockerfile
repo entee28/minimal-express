@@ -18,6 +18,7 @@ COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
 COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
 
 RUN npm install
+# RUN PROJECT BUILD HERE
 
 
 FROM node:20-alpine
