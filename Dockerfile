@@ -14,7 +14,8 @@ ARG CI_PROJECT_DIR
 WORKDIR /builder
 
 COPY --from=dependencies $CI_PROJECT_DIR/node_modules ./node_modules
-COPY --from=dependencies $CI_PROJECT_DIR/src ./src
+COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
+COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
 
 RUN npm ci
 
@@ -24,7 +25,8 @@ FROM node:20-alpine
 WORKDIR /home/node/app
 
 COPY --from=builder /builder/node_modules ./node_modules
-COPY --from=builder /builder/src ./src
+COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
+COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
 
 RUN npm ci
 
