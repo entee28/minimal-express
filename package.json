@@ -10,6 +10,27 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@socket.io/admin-ui": "^0.5.1",
+    "@trpc/server": "^10.27.1",
+    "@typegoose/typegoose": "^11.4.0",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.4.0",
+    "fast-xml-parser": "^4.2.4",
+    "js-base64": "^3.7.5",
+    "mongoose": "^7.4.0",
+    "socket.io": "^4.6.1",
+    "@types/cors": "^2.8.13",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^20.1.5",
+    "dotenv": "^16.0.3",
+    "jest": "^29.5.0",
+    "module-alias": "^2.2.2",
+    "socket.io-client": "^4.6.1",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4",
+    "zod": "^3.21.4"
   }
 }
