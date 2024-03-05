@@ -22,8 +22,37 @@ pipeline {
         stage('Build Docker Image with Kaniko') {
             agent {
                 kubernetes {
-                    defaultContainer 'kaniko'
-                    yamlFile 'k8s/kaniko.yaml'
+                    yaml '''
+                        kind: Pod
+                        metadata:
+                            name: kaniko
+                        spec:
+                            containers:
+                            - name: jnlp
+                              workingDir: /home/jenkins
+                            - name: kaniko
+                              workingDir: /home/jenkins
+                              image: gcr.io/kaniko-project/executor:debug
+                              envFrom:
+                                - secretRef:
+                                    name: kaniko-secret
+                              command:
+                              - /busybox/cat
+                              tty: true
+                              volumeMounts:
+                              - name: docker-config
+                                mountPath: /kaniko/.docker/
+                              - name: lib-cache
+                                mountPath: /home/node/app/node_modules
+                            restartPolicy: Never
+                            volumes:
+                            - name: docker-config
+                              configMap:
+                                name: docker-config
+                            - name: lib-cache
+                              persistentVolumeClaim:
+                                claimName: my-azurefile
+                    '''
                 }
             }
 
