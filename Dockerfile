@@ -1,34 +1,18 @@
-FROM node:20-alpine as dependencies
-
-ARG CI_PROJECT_DIR
-
-WORKDIR $CI_PROJECT_DIR
-
-RUN npm ci
-
-
-FROM node:20-alpine as builder
-
-ARG CI_PROJECT_DIR
-
-WORKDIR /builder
-
-COPY --from=dependencies $CI_PROJECT_DIR/node_modules ./node_modules
-COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
-COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
-
-RUN npm ci
-
-
-FROM node:20-alpine
+FROM node:20-alpine as base
 
 WORKDIR /home/node/app
 
-COPY --from=builder /builder/node_modules ./node_modules
-COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
-COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
+COPY package*.json ./
 
-RUN npm ci
+RUN npm install
+
+COPY . .
+
+FROM node:20-alpine as production
+
+WORKDIR /home/node/app
+
+COPY --from=base /home/node/app ./
 
 EXPOSE 3000
 
