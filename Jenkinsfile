@@ -1,87 +1,58 @@
 pipeline {
-    agent none
+    agent any
 
     stages {
-        stage('Cache stage') {
-            agent any
-            steps {
-                cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-                    arbitraryFileCache(
-                        path: 'node_modules',
-                        cacheValidityDecidingFile: 'package-lock.json'
-                    )
-                ]) {
-                    nodejs(nodeJSInstallationName: 'node') {
-                        sh 'npm ci'
+        podTemplate {
+            node(POD_LABEL) {
+                stage('Cache stage') {
+                    steps {
+                        cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
+                            arbitraryFileCache(
+                                path: 'node_modules',
+                                cacheValidityDecidingFile: 'package-lock.json'
+                            )
+                        ]) {
+                            nodejs(nodeJSInstallationName: 'node') {
+                                sh 'npm ci'
+                            }
+                        }
                     }
                 }
             }
         }
 
-        stage('Build Docker Image with Kaniko') {
-            agent {
-                kubernetes {
-                    yaml '''
-                        kind: Pod
-                        metadata:
-                            name: kaniko
-                        spec:
-                            containers:
-                            - name: jnlp
-                              workingDir: /home/jenkins
-                            - name: kaniko
-                              workingDir: /home/jenkins
-                              image: gcr.io/kaniko-project/executor:debug
-                              envFrom:
-                                - secretRef:
-                                    name: kaniko-secret
-                              command:
-                              - /busybox/cat
-                              tty: true
-                              volumeMounts:
-                              - name: docker-config
-                                mountPath: /kaniko/.docker/
-                              - name: lib-cache
-                                mountPath: /home/node/app/node_modules
-                            restartPolicy: Never
-                            volumes:
-                            - name: docker-config
-                              configMap:
-                                name: docker-config
-                            - name: lib-cache
-                              persistentVolumeClaim:
-                                claimName: my-azurefile
-                    '''
-                }
-            }
+        podTemplate(yaml: readTrusted('k8s/kaniko.yaml')) {
+            node(POD_LABEL) {
+                stage('Build Docker Image with Kaniko') {
+                    environment {
+                        PATH = "/busybox:/kaniko:$PATH"
+                        CI_PROJECT_DIR = "${env.WORKSPACE}"
+                    }
 
-            environment {
-                PATH = "/busybox:/kaniko:$PATH"
-                CI_PROJECT_DIR = "${env.WORKSPACE}"
-            }
-
-            steps {
-                cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-                    arbitraryFileCache(
-                        path: 'node_modules',
-                        cacheValidityDecidingFile: 'package-lock.json'
-                    )
-                ]) {
-                    container(name: 'kaniko', shell: '/busybox/sh') {
-                        sh '''#!/busybox/sh
-                        /kaniko/executor \
-                        --cache=true \
-                        --use-new-run \
-                        --snapshot-mode=redo \
-                        --context $CI_PROJECT_DIR \
-                        --dockerfile $CI_PROJECT_DIR/Dockerfile \
-                        --verbosity debug \
-                        --build-arg CI_PROJECT_DIR=$CI_PROJECT_DIR \
-                        --destination thachthucregistry.azurecr.io/minimal-express:latest \
-                    '''
+                    steps {
+                        cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
+                            arbitraryFileCache(
+                                path: 'node_modules',
+                                cacheValidityDecidingFile: 'package-lock.json'
+                            )
+                        ]) {
+                            container(name: 'kaniko', shell: '/busybox/sh') {
+                                sh '''#!/busybox/sh
+                                /kaniko/executor \
+                                --cache=true \
+                                --use-new-run \
+                                --snapshot-mode=redo \
+                                --context $CI_PROJECT_DIR \
+                                --dockerfile $CI_PROJECT_DIR/Dockerfile \
+                                --verbosity debug \
+                                --build-arg CI_PROJECT_DIR=$CI_PROJECT_DIR \
+                                --destination thachthucregistry.azurecr.io/minimal-express:latest \
+                            '''
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
