@@ -13,7 +13,7 @@ pipeline {
                     )
                 ]) {
                     nodejs(nodeJSInstallationName: 'node') {
-                        sh 'npm ci'
+                        sh 'npm install'
                     }
                 }
             }

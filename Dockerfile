@@ -4,7 +4,7 @@ ARG CI_PROJECT_DIR
 
 WORKDIR $CI_PROJECT_DIR
 
-RUN npm ci
+RUN npm install
 
 
 FROM node:20-alpine as builder
@@ -17,7 +17,7 @@ COPY --from=dependencies $CI_PROJECT_DIR/node_modules ./node_modules
 COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
 COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
 
-RUN npm ci
+RUN npm install
 
 
 FROM node:20-alpine
@@ -28,7 +28,7 @@ COPY --from=builder /builder/node_modules ./node_modules
 COPY --from=dependencies $CI_PROJECT_DIR/package*.json ./
 COPY --from=dependencies $CI_PROJECT_DIR/index.js ./
 
-RUN npm ci
+RUN npm install
 
 EXPOSE 3000
 
