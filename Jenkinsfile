@@ -28,7 +28,6 @@ pipeline {
             }
 
             environment {
-                PATH = "/busybox:/kaniko:$PATH"
                 CI_PROJECT_DIR = "${env.WORKSPACE}"
             }
 
